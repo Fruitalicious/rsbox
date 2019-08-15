@@ -21,10 +21,6 @@ interface Player : LivingEntity {
 
     val privilege: Int
 
-    var server: Server
-
-    var world: World
-
     val interfaces: InterfaceSet
 
 
