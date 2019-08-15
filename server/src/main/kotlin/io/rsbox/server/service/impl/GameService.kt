@@ -9,6 +9,8 @@ import io.rsbox.server.net.packet.MessageDecoderSet
 import io.rsbox.server.service.Service
 import io.rsbox.server.task.GameTask
 import io.rsbox.server.task.MessageHandlerTask
+import io.rsbox.server.task.parallel.ParallelSyncTask
+import io.rsbox.server.task.sequential.SequentialSyncTask
 import mu.KLogging
 import java.lang.Exception
 import java.util.concurrent.Executors
@@ -23,7 +25,7 @@ class GameService : Service() {
 
     private val executor: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor(
         ThreadFactoryBuilder()
-            .setNameFormat("GAME-TICK")
+            .setNameFormat("GAME-SERVICE")
             .setUncaughtExceptionHandler { t, e -> logger.error("Error with thread $t.", e)}
             .build()
     )
@@ -51,7 +53,8 @@ class GameService : Service() {
 
         if(sequentialTasks) {
             tasks.addAll(arrayOf(
-                MessageHandlerTask()
+                MessageHandlerTask(),
+                SequentialSyncTask()
             ))
             logger.info { "Server using sequential task mode. ${tasks.size} will be handled per game tick." }
         } else {
@@ -62,7 +65,8 @@ class GameService : Service() {
                     .build())
 
             tasks.addAll(arrayOf(
-                MessageHandlerTask()
+                MessageHandlerTask(),
+                ParallelSyncTask(executor)
             ))
             logger.info("Server using parallel task mode. ${tasks.size} will be handled per cycles on $availableProcessors threads.")
         }
