@@ -1,15 +1,17 @@
 package io.rsbox.server.model.entity
 
 import io.rsbox.api.inter.*
-import io.rsbox.server.Launcher
 import io.rsbox.server.Server
 import io.rsbox.server.def.impl.VarbitDef
 import io.rsbox.server.def.impl.VarpDef
+import io.rsbox.server.model.Appearance
 import io.rsbox.server.model.data.varp.VarpSet
+import io.rsbox.server.model.world.World
 import io.rsbox.server.net.packet.Message
 import io.rsbox.server.net.packet.impl.message.InterfaceOpenSubMessage
 import io.rsbox.server.net.packet.impl.message.InterfaceOpenTopMessage
 import io.rsbox.server.net.packet.impl.message.RunClientScriptMessage
+import io.rsbox.server.sync.block.UpdateBlockType
 
 /**
  * @author Kyle Escobar
@@ -28,11 +30,9 @@ open class Player : LivingEntity(), io.rsbox.api.entity.Player {
 
     lateinit var client: Client
 
+    var appearance: Appearance = Appearance.DEFAULT
+
     var lastIndex = -1
-
-    override var world: io.rsbox.api.world.World = Launcher.server.world
-
-    final override var server: io.rsbox.api.Server = Launcher.server
 
     /**
      * Rendering data
@@ -140,9 +140,31 @@ open class Player : LivingEntity(), io.rsbox.api.entity.Player {
     }
 
     /**
+     * Block Update Methods
+     */
+
+    fun addBlock(block: UpdateBlockType) {
+        val bits = (world as World).playerUpdateBlocks.updateBlocks[block]!!
+        blockBuffer.addBit(bits.bit)
+    }
+
+    fun hasBlock(block: UpdateBlockType): Boolean {
+        val bits = (world as World).playerUpdateBlocks.updateBlocks[block]!!
+        return blockBuffer.hasBit(bits.bit)
+    }
+
+    /**
      * Helper Methods
      */
     override fun runClientScript(id: Int, vararg args: Any) {
         write(RunClientScriptMessage(id, *args))
+    }
+
+    /**
+     * Called every game tick. Handles all the processing for the next tick for the player
+     * object.
+     */
+    fun cycle() {
+
     }
 }
