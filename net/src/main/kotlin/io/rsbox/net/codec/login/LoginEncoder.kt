@@ -5,6 +5,7 @@ import io.netty.channel.ChannelHandlerContext
 import io.netty.handler.codec.MessageToByteEncoder
 import io.rsbox.engine.model.entity.Player
 import io.rsbox.engine.net.login.LoginResponse
+import io.rsbox.net.codec.game.GamePacketEncoder
 import io.rsbox.net.context.ContextHandler
 import io.rsbox.net.context.GameContext
 import io.rsbox.util.IsaacRandom
@@ -38,8 +39,7 @@ class LoginEncoder : MessageToByteEncoder<LoginResponse>() {
             p.remove("login_decoder")
             p.remove("login_encoder")
 
-            p.addFirst("packet_encoder", null)
-            p.addAfter("packet_encoder", "message_encoder", null)
+            p.addFirst("packet_encoder", GamePacketEncoder(encodeRandom))
             p.addBefore("handler", "packet_decoder", null)
 
             player.login()
