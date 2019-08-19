@@ -25,26 +25,5 @@ class LoginEncoder : MessageToByteEncoder<LoginResponse>() {
         out.writeBoolean(true)
         out.writeShort(msg.player.index)
         out.writeBoolean(true)
-
-        setupGameContext(ctx, msg.player, msg.encodeRandom, msg.decodeRandom)
-    }
-
-    private fun setupGameContext(ctx: ChannelHandlerContext, player: Player, encodeRandom: IsaacRandom, decodeRandom: IsaacRandom) {
-        val gameContext = GameContext(ctx.channel(), player)
-        player.channel.attr(ContextHandler.CONTEXT_KEY).set(gameContext)
-
-        val p = player.channel.pipeline()
-
-        if(player.channel.isActive) {
-            p.remove("handshake_encoder")
-            p.remove("login_decoder")
-            p.remove("login_encoder")
-
-            p.addFirst("packet_encoder", GamePacketEncoder(encodeRandom))
-            p.addBefore("handler", "packet_decoder", GamePacketDecoder(decodeRandom))
-
-            player.login()
-            player.channel.flush()
-        }
     }
 }

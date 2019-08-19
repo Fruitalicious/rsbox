@@ -9,6 +9,7 @@ import io.rsbox.util.IsaacRandom
 import mu.KLogging
 import java.util.concurrent.Executors
 import java.util.concurrent.LinkedBlockingDeque
+import java.util.concurrent.LinkedBlockingQueue
 
 /**
  * @author Kyle Escobar
@@ -17,6 +18,8 @@ import java.util.concurrent.LinkedBlockingDeque
 class LoginService : Service() {
 
     val loginRequestQueue = LinkedBlockingDeque<LoginRequest>()
+
+    val successfulLoginRequeustQueue = LinkedBlockingQueue<SuccessfulLoginRequest>()
 
     private val loginThreads = 2
 
@@ -46,13 +49,15 @@ class LoginService : Service() {
 
     fun executeLogin(player: Player, encodeRandom: IsaacRandom, decodeRandom: IsaacRandom) {
         player.register()
-        player.channel.write(
+        player.channel.writeAndFlush(
             LoginResponse(
                 player = player,
                 encodeRandom = encodeRandom,
                 decodeRandom = decodeRandom
             )
         )
+
+        successfulLoginRequeustQueue.offer(SuccessfulLoginRequest(player, encodeRandom, decodeRandom))
     }
 
     companion object : KLogging()

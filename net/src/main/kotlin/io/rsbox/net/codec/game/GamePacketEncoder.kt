@@ -33,6 +33,8 @@ class GamePacketEncoder(private val random: IsaacRandom) : MessageToByteEncoder<
         }
         out.writeBytes(msg.payload)
         msg.payload.release()
+
+        println("Packet sent opcode=${msg.opcode} type=${msg.type} length=${msg.length}")
     }
 
     companion object : KLogging()

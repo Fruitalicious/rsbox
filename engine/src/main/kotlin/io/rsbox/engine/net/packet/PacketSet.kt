@@ -29,8 +29,6 @@ class PacketSet {
 
     fun getClientPacket(opcode: Int): ClientPacket? = clientPackets[opcode]
 
-    fun validClientPacketOpcode(opcode: Int): Boolean = clientPackets[opcode] != null
-
     companion object : KLogging()
 }
 

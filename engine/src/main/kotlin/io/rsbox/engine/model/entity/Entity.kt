@@ -8,6 +8,6 @@ import io.rsbox.engine.model.world.Tile
 
 open class Entity {
 
-    var tile: Tile = Tile(0,0,0)
+    var tile: Tile = Tile(3221,3218,0)
 
 }

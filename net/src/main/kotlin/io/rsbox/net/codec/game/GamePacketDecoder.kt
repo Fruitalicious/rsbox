@@ -20,6 +20,8 @@ class GamePacketDecoder(private val random: IsaacRandom) : StatefulMessageDecode
     private var length = 0
     private var type = PacketType.FIXED
 
+    private var ignore = false
+
     private val packets = ServiceManager[GameService::class.java]!!.packets
 
     override fun decode(ctx: ChannelHandlerContext, buf: ByteBuf, out: MutableList<Any>, state: GamePacketDecoderState) {
@@ -35,11 +37,9 @@ class GamePacketDecoder(private val random: IsaacRandom) : StatefulMessageDecode
 
         opcode = (buf.readUnsignedByte().toInt() - (random.nextInt() and 0xFF))
         // Try to get packet class from opcode
-        if(!packets.validClientPacketOpcode(opcode)) {
-            if(ctx.channel().isOpen) {
-                ctx.channel().disconnect()
-                logger.info("Disconnected channel {} due to non-configured packet with opcode {}.", ctx.channel(), opcode)
-            }
+        if(packets.getClientPacket(opcode) == null) {
+            logger.warn("Client channel {} sent packet with non-configured opcode {}.", ctx.channel(), opcode)
+            buf.skipBytes(buf.readableBytes())
             return
         }
 
