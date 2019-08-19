@@ -2,6 +2,8 @@ package io.rsbox.engine.model.entity
 
 import io.netty.channel.Channel
 import io.rsbox.engine.Engine
+import io.rsbox.engine.net.packet.ServerPacket
+import io.rsbox.engine.net.packet.impl.server.LoginPacket
 
 /**
  * @author Kyle Escobar
@@ -53,7 +55,11 @@ class Player(val channel: Channel) : LivingEntity() {
 
         initiated = true
 
-        // TODO Send login packet
+        sendPacket(LoginPacket(lastIndex, tile, tiles, world.xteaKeyService))
+    }
+
+    fun sendPacket(packet: ServerPacket) {
+        channel.write(packet.toGamePacket())
     }
 
     companion object {

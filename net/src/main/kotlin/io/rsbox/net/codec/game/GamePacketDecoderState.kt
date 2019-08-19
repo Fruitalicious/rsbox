@@ -5,4 +5,7 @@ package io.rsbox.net.codec.game
  */
 
 enum class GamePacketDecoderState {
+    OPCODE,
+    LENGTH,
+    PAYLOAD;
 }

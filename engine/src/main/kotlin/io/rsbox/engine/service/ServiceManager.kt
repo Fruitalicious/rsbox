@@ -1,5 +1,6 @@
 package io.rsbox.engine.service
 
+import io.rsbox.engine.service.impl.GameService
 import io.rsbox.engine.service.impl.XteaKeyService
 import io.rsbox.engine.service.impl.login.LoginService
 import mu.KLogging
@@ -16,6 +17,7 @@ object ServiceManager : KLogging() {
 
         register(LoginService::class.java)
         register(XteaKeyService::class.java)
+        register(GameService::class.java)
     }
 
     private fun register(service: Class<out Service>) {
