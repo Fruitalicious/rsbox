@@ -1,0 +1,7 @@
+plugins {}
+
+dependencies {
+    implementation project(':util')
+    
+    compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.62'
+}

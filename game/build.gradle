@@ -1,8 +1,0 @@
-plugins {}
-
-group 'rsbox'
-version '0.1-ALPHA'
-
-dependencies {
-    implementation project(':api')
-}
