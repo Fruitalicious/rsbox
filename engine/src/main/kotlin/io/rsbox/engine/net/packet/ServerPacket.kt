@@ -1,6 +1,5 @@
 package io.rsbox.engine.net.packet
 
-import io.netty.buffer.ByteBuf
 import io.rsbox.engine.net.packet.model.GamePacket
 import io.rsbox.engine.net.packet.model.GamePacketBuilder
 import io.rsbox.engine.net.packet.model.PacketType

@@ -1,5 +1,7 @@
 package io.rsbox.engine.net.packet
 
+import io.rsbox.engine.net.packet.impl.server.LoginPacket
+import io.rsbox.engine.net.packet.impl.server.RebuildRegionPacket
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap
 import mu.KLogging
 
@@ -9,15 +11,19 @@ class PacketSet {
 
     private val clientPackets = arrayOfNulls<ClientPacket>(256)
 
-    fun registerServerPacket(opcode: Int, packet: Class<out ServerPacket>) {
-        if(serverPackets[opcode] != null) {
-            logger.error("Unable to add packet {} with opcode {} as that opcode has already been bound.", packet::class.java.simpleName, opcode)
-        } else {
-            serverPackets[opcode] = packet
-        }
+    fun loadPackets() {
+        // Server Packets
+        registerServerPacket(0, LoginPacket::class.java)
+        registerServerPacket(0, RebuildRegionPacket::class.java)
+
+        // Client Packets
     }
 
-    fun registerClientPacket(opcode: Int, packet: ClientPacket) {
+    private fun registerServerPacket(opcode: Int, packet: Class<out ServerPacket>) {
+        serverPackets[opcode] = packet
+    }
+
+    private fun registerClientPacket(opcode: Int, packet: ClientPacket) {
         if(clientPackets[opcode] != null) {
             logger.error("Unable to add packet {} with opcode {} as that opcode has already been bound.", packet::class.java.simpleName, opcode)
         } else {
@@ -27,7 +33,10 @@ class PacketSet {
 
     fun getServerPacket(opcode: Int): ServerPacket? = serverPackets[opcode]!!.newInstance() ?: null
 
-    fun getClientPacket(opcode: Int): ClientPacket? = clientPackets[opcode]
+    fun getClientPacket(opcode: Int): ClientPacket? {
+        if(opcode < 0 || opcode > 256) return null
+        return clientPackets[opcode]
+    }
 
     companion object : KLogging()
 }

@@ -2,6 +2,7 @@ package io.rsbox.net.context
 
 import io.netty.channel.Channel
 import io.netty.channel.ChannelHandlerContext
+import io.rsbox.engine.net.ServerContext
 import io.rsbox.engine.service.ServiceManager
 import io.rsbox.engine.service.impl.login.LoginService
 import io.rsbox.engine.net.login.LoginRequest

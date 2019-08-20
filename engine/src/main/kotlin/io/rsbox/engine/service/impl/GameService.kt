@@ -1,41 +1,62 @@
 package io.rsbox.engine.service.impl
 
-import io.rsbox.engine.net.packet.ClientPacket
+import com.google.common.util.concurrent.ThreadFactoryBuilder
 import io.rsbox.engine.net.packet.PacketSet
-import io.rsbox.engine.net.packet.impl.server.LoginPacket
 import io.rsbox.engine.service.Service
-import java.util.concurrent.ArrayBlockingQueue
+import io.rsbox.engine.task.GameTask
+import io.rsbox.engine.task.impl.PacketHandlerTask
+import io.rsbox.engine.task.impl.ParallelPlayerSyncTask
+import mu.KLogging
+import java.util.concurrent.Executors
+import java.util.concurrent.ScheduledExecutorService
+import java.util.concurrent.TimeUnit
 
 class GameService : Service() {
 
     val packets = PacketSet()
 
-    private val ingressPacketQueue = ArrayBlockingQueue<ClientPacket>(50)
+    private val executor: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor(
+        ThreadFactoryBuilder()
+            .setNameFormat("game-thread")
+            .setUncaughtExceptionHandler { t, e -> logger.error("Error with thread $t.", e) }
+            .build())
+
+    private val tasks = mutableListOf<GameTask>()
 
     override fun start() {
-        registerPackets()
+        packets.loadPackets()
+        this.loadTasks()
+
+        executor.scheduleAtFixedRate(this::cycle, 0, 600L, TimeUnit.MILLISECONDS)
     }
 
     override fun stop() {
 
     }
 
-    private fun registerPackets() {
-        // Server Packets
-        packets.registerServerPacket(0, LoginPacket::class.java)
+    private fun loadTasks() {
+        val taskThreads = Runtime.getRuntime().availableProcessors()
+        val taskExecutor = Executors.newFixedThreadPool(taskThreads,
+            ThreadFactoryBuilder()
+                .setNameFormat("game-task")
+                .setUncaughtExceptionHandler { t, e -> logger.error("Error in thread $t.", e) }
+                .build())
 
-        // Client Packets
+        tasks.addAll(arrayOf(
+            PacketHandlerTask(),
+            ParallelPlayerSyncTask(taskExecutor)
+        ))
     }
 
-    fun queueIngressPacket(handle: ClientPacket) {
-        ingressPacketQueue.offer(handle)
-    }
-
-    fun handlePackets() {
-        for(i in 0 until 50) {
-            val next = ingressPacketQueue.poll() ?: break
-            next.decode()
-            next.handler()
+    private fun cycle() {
+        tasks.forEach { task ->
+            try {
+                task.execute(this)
+            } catch(e : Exception) {
+                logger.error("Error with task ${task.javaClass.simpleName}.", e)
+            }
         }
     }
+
+    companion object : KLogging()
 }

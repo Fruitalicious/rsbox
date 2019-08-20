@@ -6,12 +6,12 @@ import io.rsbox.engine.service.impl.login.LoginService
 import io.rsbox.net.codec.game.GamePacketDecoder
 import io.rsbox.net.codec.game.GamePacketEncoder
 import io.rsbox.net.context.ContextHandler
-import io.rsbox.net.context.GameContext
+import io.rsbox.engine.net.game.GameContext
 import mu.KLogging
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-object LoginNetworkProcessor : KLogging() {
+object LoginProcessor : KLogging() {
 
     private val service = ServiceManager[LoginService::class.java]!!
 
@@ -25,8 +25,10 @@ object LoginNetworkProcessor : KLogging() {
         val run = Runnable {
             while(true) {
                 val next = service.successfulLoginRequeustQueue.take()
-                val gameContext = GameContext(next.player.channel, next.player)
+                val gameContext = GameContext(next.player.channel)
                 next.player.channel.attr(ContextHandler.CONTEXT_KEY).set(gameContext)
+
+                next.player.context = gameContext
 
                 val p = next.player.channel.pipeline()
 

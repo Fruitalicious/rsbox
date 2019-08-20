@@ -3,10 +3,9 @@ package io.rsbox.server
 import com.uchuhimo.konf.Config
 import com.uchuhimo.konf.source.yaml.toYaml
 import io.rsbox.engine.Engine
-import io.rsbox.engine.EngineConstants
 import io.rsbox.engine.config.ServerConfig
 import io.rsbox.engine.config.spec.ServerSpec
-import io.rsbox.net.LoginNetworkProcessor
+import io.rsbox.net.LoginProcessor
 import io.rsbox.net.ServerNetwork
 import io.rsbox.server.setup.Setup
 import mu.KLogging
@@ -47,7 +46,7 @@ class Server {
         engine.init()
         engine.postInit()
 
-        LoginNetworkProcessor.start()
+        LoginProcessor.start()
 
         logger.info("Starting game network.")
         ServerNetwork.start()

@@ -2,6 +2,8 @@ package io.rsbox.engine.model.entity
 
 import io.netty.channel.Channel
 import io.rsbox.engine.Engine
+import io.rsbox.engine.model.world.Coordinate
+import io.rsbox.engine.net.game.GameContext
 import io.rsbox.engine.net.packet.ServerPacket
 import io.rsbox.engine.net.packet.impl.server.LoginPacket
 
@@ -26,6 +28,8 @@ class Player(val channel: Channel) : LivingEntity() {
 
     val world = Engine.world
 
+    lateinit var context: GameContext
+
     internal val gpiLocalPlayers = arrayOfNulls<Player>(2048)
     internal val gpiLocalIndexes = IntArray(2048)
     internal var gpiLocalCount = 0
@@ -35,6 +39,8 @@ class Player(val channel: Channel) : LivingEntity() {
     internal val gpiInactivityFlags = IntArray(2048)
 
     internal val gpiTileHashMultipliers = IntArray(2048)
+
+    var lastKnownRegionBase: Coordinate? = null
 
     fun register() {
         world.registerPlayer(this)
@@ -59,7 +65,7 @@ class Player(val channel: Channel) : LivingEntity() {
     }
 
     fun sendPacket(packet: ServerPacket) {
-        channel.write(packet.toGamePacket())
+        context.write(packet)
     }
 
     companion object {

@@ -1,8 +1,7 @@
 package io.rsbox.engine
 
-import io.rsbox.engine.crypt.rsa.RSA
+import io.rsbox.engine.system.crypt.rsa.RSA
 import io.rsbox.engine.model.world.World
-import io.rsbox.engine.service.Service
 import io.rsbox.engine.service.ServiceManager
 import mu.KLogging
 import net.runelite.cache.fs.Store
@@ -30,11 +29,13 @@ class Engine {
         logger.info("Preparing to load RSA key pairs.")
         RSA.load()
 
+        world = World(this)
+        world.preLoad()
+        world.load()
+
         ServiceManager.init()
 
-        logger.info("Preparing to load world.")
-        world = World(this)
-        world.init()
+        world.postLoad()
         logger.info("Loaded game world.")
     }
 

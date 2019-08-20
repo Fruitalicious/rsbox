@@ -7,7 +7,7 @@ import io.netty.channel.ChannelHandlerContext
 import io.rsbox.engine.Engine
 import io.rsbox.engine.config.ServerConfig
 import io.rsbox.engine.config.spec.ServerSpec
-import io.rsbox.engine.crypt.rsa.RSA
+import io.rsbox.engine.system.crypt.rsa.RSA
 import io.rsbox.engine.net.login.LoginRequest
 import io.rsbox.engine.ServerResponse
 import io.rsbox.net.codec.StatefulMessageDecoder

@@ -33,37 +33,46 @@ class GamePacketDecoder(private val random: IsaacRandom) : StatefulMessageDecode
     }
 
     private fun decodeOpcode(ctx: ChannelHandlerContext, buf: ByteBuf) {
-        if(!buf.isReadable) return
+        if(buf.isReadable) {
+            opcode = (buf.readByte().toInt() - random.nextInt()) and 0xFF
+            // Try to get packet class from opcode
+            if (packets.getClientPacket(opcode) == null) {
+                ignore = true
 
-        opcode = (buf.readUnsignedByte().toInt() - (random.nextInt() and 0xFF))
-        // Try to get packet class from opcode
-        if(packets.getClientPacket(opcode) == null) {
-            logger.warn("Client channel {} sent packet with non-configured opcode {}.", ctx.channel(), opcode)
-            buf.skipBytes(buf.readableBytes())
-            return
-        }
-
-        val gamepacket = packets.getClientPacket(opcode)!!
-        type = gamepacket.type
-
-        when(type) {
-            PacketType.FIXED -> {
-                val len = gamepacket.packet.length
-                if(length == -1) {
-                    length = buf.readUnsignedByte().toInt()
-                } else if(len == -2) {
-                    length = buf.readUnsignedShort()
+                if(ClientPacketTypes.forOpcode(opcode)!!.length == -1 || ClientPacketTypes.forOpcode(opcode)!!.length == -2) {
+                    setState(GamePacketDecoderState.LENGTH)
+                } else {
+                    logger.warn("Client sent packet with non-configured opcode {}.", opcode)
+                    val length = ClientPacketTypes.forOpcode(opcode)!!.length
+                    buf.skipBytes(length)
+                    return
                 }
-                buf.skipBytes(length)
-                setState(GamePacketDecoderState.OPCODE)
             }
 
-            PacketType.VARIABLE_BYTE, PacketType.VARIABLE_SHORT -> {
-                setState(GamePacketDecoderState.LENGTH)
-            }
+            if(!ignore) {
+                val gamepacket = packets.getClientPacket(opcode)!!
+                type = gamepacket.type
 
-            else -> {
-                throw IllegalStateException("Unhandled packet type $type for opcode $opcode.")
+                when (type) {
+                    PacketType.FIXED -> {
+                        val len = gamepacket.packet.length
+                        if (length == -1) {
+                            length = buf.readUnsignedByte().toInt()
+                        } else if (len == -2) {
+                            length = buf.readUnsignedShort()
+                        }
+                        buf.skipBytes(length)
+                        setState(GamePacketDecoderState.OPCODE)
+                    }
+
+                    PacketType.VARIABLE_BYTE, PacketType.VARIABLE_SHORT -> {
+                        setState(GamePacketDecoderState.LENGTH)
+                    }
+
+                    else -> {
+                        throw IllegalStateException("Unhandled packet type $type for opcode $opcode.")
+                    }
+                }
             }
         }
     }
@@ -71,7 +80,11 @@ class GamePacketDecoder(private val random: IsaacRandom) : StatefulMessageDecode
     private fun decodeLength(buf: ByteBuf) {
         if(buf.isReadable) {
             length = if(type == PacketType.VARIABLE_SHORT) buf.readUnsignedShort() else buf.readUnsignedByte().toInt()
-            if(length != 0) {
+            if(ignore) {
+                logger.warn("Client sent packet with non-configured opcode {}.", opcode)
+                buf.skipBytes(buf.readableBytes())
+                return
+            } else if(length != 0) {
                 setState(GamePacketDecoderState.PAYLOAD)
             }
         }

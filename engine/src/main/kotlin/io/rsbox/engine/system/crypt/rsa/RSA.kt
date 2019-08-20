@@ -1,4 +1,4 @@
-package io.rsbox.engine.crypt.rsa
+package io.rsbox.engine.system.crypt.rsa
 
 import com.uchuhimo.konf.Config
 import io.rsbox.engine.EngineConstants

@@ -3,7 +3,7 @@ package io.rsbox.server.setup
 import com.uchuhimo.konf.Config
 import io.rsbox.engine.EngineConstants
 import io.rsbox.engine.config.spec.ServerSpec
-import io.rsbox.engine.crypt.rsa.RSA
+import io.rsbox.engine.system.crypt.rsa.RSA
 import java.io.File
 import java.io.FileOutputStream
 import java.net.URL

@@ -20,7 +20,7 @@ class World(val engine: Engine) {
 
     val players = LivingEntityList(arrayOfNulls<Player>(2000))
 
-    val xteaKeyService: XteaKeyService = ServiceManager[XteaKeyService::class.java]!!
+    lateinit var xteaKeyService: XteaKeyService
 
     val huffman by lazy {
         val binary = Engine.cacheStore.getIndex(IndexType.BINARY)!!
@@ -29,22 +29,16 @@ class World(val engine: Engine) {
         HuffmanCodec(file.contents)
     }
 
-    fun init() {
-        this.preLoad()
-        this.load()
-        this.postLoad()
-    }
-
-    private fun preLoad() {
+    fun preLoad() {
 
     }
 
-    private fun load() {
+    fun load() {
 
     }
 
-    private fun postLoad() {
-
+    fun postLoad() {
+        xteaKeyService = ServiceManager[XteaKeyService::class.java]!!
     }
 
     internal fun registerPlayer(player: Player): Boolean {
