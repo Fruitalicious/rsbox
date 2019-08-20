@@ -35,7 +35,6 @@ class GameContext(channel: Channel) : ServerContext(channel) {
 
     fun write(packet: ServerPacket) {
         channel.write(packet.toGamePacket())
-        println("Sent packet ${packet::class.java.simpleName}")
     }
 
     fun handleMessages() {

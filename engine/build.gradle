@@ -1,6 +1,8 @@
 plugins {}
 
 dependencies {
+    api project(':api')
+    implementation project(':game')
     implementation project(':util')
     
     compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.62'

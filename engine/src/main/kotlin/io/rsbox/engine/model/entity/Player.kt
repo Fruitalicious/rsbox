@@ -1,32 +1,41 @@
 package io.rsbox.engine.model.entity
 
 import io.netty.channel.Channel
+import io.rsbox.api.inter.DisplayMode
+import io.rsbox.api.inter.InterfaceDestination
+import io.rsbox.api.inter.getChildId
+import io.rsbox.api.inter.getDisplayComponentId
 import io.rsbox.engine.Engine
+import io.rsbox.engine.model.inter.InterfaceSet
 import io.rsbox.engine.model.world.Coordinate
 import io.rsbox.engine.net.game.GameContext
 import io.rsbox.engine.net.packet.ServerPacket
+import io.rsbox.engine.net.packet.impl.server.InterfaceOpenPacket
+import io.rsbox.engine.net.packet.impl.server.InterfaceOpenRootPacket
 import io.rsbox.engine.net.packet.impl.server.LoginPacket
+import io.rsbox.game.Game
 
 /**
  * @author Kyle Escobar
  */
 
-class Player(val channel: Channel) : LivingEntity() {
+class Player(val channel: Channel) : LivingEntity(), io.rsbox.api.entity.Player {
 
-    lateinit var username: String
+    override lateinit var username: String
 
-    lateinit var passwordHash: String
+    override lateinit var passwordHash: String
 
-    lateinit var displayName: String
+    override lateinit var displayName: String
 
-    var privilege: Int = 0
+    override var privilege: Int = 0
 
 
-    var initiated = false
+    override var initiated = false
 
     var lastIndex = -1
 
-    val world = Engine.world
+    val _world = Engine.world
+    override val world: io.rsbox.api.world.World = _world
 
     lateinit var context: GameContext
 
@@ -42,8 +51,12 @@ class Player(val channel: Channel) : LivingEntity() {
 
     var lastKnownRegionBase: Coordinate? = null
 
+    val interfaces by lazy { InterfaceSet() }
+
+    override val displayMode: DisplayMode get() = interfaces.displayMode
+
     fun register() {
-        world.registerPlayer(this)
+        _world.registerPlayer(this)
     }
 
     fun login() {
@@ -53,7 +66,7 @@ class Player(val channel: Channel) : LivingEntity() {
         for(i in 1 until 2048) {
             if(i == index) continue
             gpiExternalIndexes[gpiExternalCount++] = i
-            gpiTileHashMultipliers[i] = if(i < world.players.capacity) world.players[i]?.tile?.asTileHashMultiplier ?: 0 else 0
+            gpiTileHashMultipliers[i] = if(i < _world.players.capacity) _world.players[i]?._tile?.asTileHashMultiplier ?: 0 else 0
         }
 
         val tiles = IntArray(gpiTileHashMultipliers.size)
@@ -61,11 +74,56 @@ class Player(val channel: Channel) : LivingEntity() {
 
         initiated = true
 
-        sendPacket(LoginPacket(lastIndex, tile, tiles, world.xteaKeyService))
+        sendPacket(LoginPacket(lastIndex, _tile, tiles, _world.xteaKeyService))
+
+        Game.setupRootInterfaces(this)
     }
 
     fun sendPacket(packet: ServerPacket) {
         context.write(packet)
+    }
+
+    /**
+     * INTERFACES
+     */
+
+    override fun openOverlayInterface(displayMode: DisplayMode) {
+        if(displayMode != interfaces.displayMode) {
+            interfaces.setVisible(getDisplayComponentId(interfaces.displayMode), getChildId(InterfaceDestination.MAIN_SCREEN, interfaces.displayMode), false)
+        }
+
+        val component = getDisplayComponentId(displayMode)
+        interfaces.setVisible(getDisplayComponentId(displayMode), 0, true)
+        sendPacket(InterfaceOpenRootPacket(component))
+    }
+
+    override fun openInterface(parent: Int, child: Int, interfaceId: Int, type: Int, isModal: Boolean) {
+        if(isModal) {
+            interfaces.openModal(parent, child, interfaceId)
+        } else {
+            interfaces.open(parent, child, interfaceId)
+        }
+        sendPacket(InterfaceOpenPacket(parent, child, interfaceId, type))
+    }
+
+    override fun openInterface(interfaceId: Int, dest: InterfaceDestination, fullscreen: Boolean) {
+        val displayMode = if(!fullscreen || dest.fullscreenChildId == -1) interfaces.displayMode else DisplayMode.FULLSCREEN
+        val child = getChildId(dest, displayMode)
+        val parent = getDisplayComponentId(displayMode)
+        if(displayMode == DisplayMode.FULLSCREEN) {
+            openOverlayInterface(displayMode)
+        }
+        openInterface(parent, child, interfaceId, if(dest.clickThrough) 1 else 0, isModal = dest == InterfaceDestination.MAIN_SCREEN)
+    }
+
+    override fun openInterface(dest: InterfaceDestination, autoClose: Boolean) {
+        val displayMode = if(!autoClose || dest.fullscreenChildId == -1) interfaces.displayMode else DisplayMode.FULLSCREEN
+        val child = getChildId(dest, displayMode)
+        val parent = getDisplayComponentId(displayMode)
+        if(displayMode == DisplayMode.FULLSCREEN) {
+            openOverlayInterface(displayMode)
+        }
+        openInterface(parent, child, dest.interfaceId, if(dest.clickThrough) 1 else 0, isModal = dest == InterfaceDestination.MAIN_SCREEN)
     }
 
     companion object {

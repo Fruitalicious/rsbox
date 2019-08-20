@@ -1,5 +1,7 @@
 package io.rsbox.engine.net.packet
 
+import io.rsbox.engine.net.packet.impl.server.InterfaceOpenPacket
+import io.rsbox.engine.net.packet.impl.server.InterfaceOpenRootPacket
 import io.rsbox.engine.net.packet.impl.server.LoginPacket
 import io.rsbox.engine.net.packet.impl.server.RebuildRegionPacket
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap
@@ -15,6 +17,8 @@ class PacketSet {
         // Server Packets
         registerServerPacket(0, LoginPacket::class.java)
         registerServerPacket(0, RebuildRegionPacket::class.java)
+        registerServerPacket(84, InterfaceOpenRootPacket::class.java)
+        registerServerPacket(77, InterfaceOpenPacket::class.java)
 
         // Client Packets
     }

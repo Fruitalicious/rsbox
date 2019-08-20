@@ -4,24 +4,24 @@ package io.rsbox.engine.model.world
  * @author Kyle Escobar
  */
 
-class Tile {
+class Tile : io.rsbox.api.world.Tile {
     private val coordinate: Int
 
-    val x: Int get() = coordinate and 0x7FFF
+    override val x: Int get() = coordinate and 0x7FFF
 
-    val z: Int get() = (coordinate shr 15) and 0x7FFF
+    override val z: Int get() = (coordinate shr 15) and 0x7FFF
 
-    val height: Int get() = coordinate ushr 30
+    override val height: Int get() = coordinate ushr 30
 
-    val topLeftRegionX: Int get() = (x shr 3) - 6
+    override val topLeftRegionX: Int get() = (x shr 3) - 6
 
-    val topLeftRegionZ: Int get() = (z shr 3) - 6
+    override val topLeftRegionZ: Int get() = (z shr 3) - 6
 
-    val regionId: Int get() = ((x shr 6) shl 8) or (z shr 6)
+    override val regionId: Int get() = ((x shr 6) shl 8) or (z shr 6)
 
-    val as30BitInteger: Int get() = (z and 0x3FFF) or ((x and 0x3FFF) shl 14) or ((height and 0x3) shl 28)
+    override val as30BitInteger: Int get() = (z and 0x3FFF) or ((x and 0x3FFF) shl 14) or ((height and 0x3) shl 28)
 
-    val asTileHashMultiplier: Int get() = (z shr 13) or ((x shr 13) shl 8) or ((height and 0x3) shl 16)
+    override val asTileHashMultiplier: Int get() = (z shr 13) or ((x shr 13) shl 8) or ((height and 0x3) shl 16)
 
     private constructor(coordinate: Int) {
         this.coordinate = coordinate

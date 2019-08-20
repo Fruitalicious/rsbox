@@ -2,6 +2,7 @@ package io.rsbox.server
 
 import com.uchuhimo.konf.Config
 import com.uchuhimo.konf.source.yaml.toYaml
+import io.rsbox.api.RSBox
 import io.rsbox.engine.Engine
 import io.rsbox.engine.config.ServerConfig
 import io.rsbox.engine.config.spec.ServerSpec
@@ -15,7 +16,7 @@ import java.io.File
  * @author Kyle Escobar
  */
 
-class Server {
+class Server : io.rsbox.api.Server {
 
     /**
      * Entry into starting the server.
@@ -33,6 +34,9 @@ class Server {
     private var engine = Engine()
 
     private fun init() {
+        logger.info("Hooking into RSBox API.")
+        RSBox.server = this
+
         logger.info("Scanning data directories.")
         initDirs()
 

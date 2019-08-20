@@ -1,5 +1,6 @@
 package io.rsbox.engine
 
+import io.rsbox.api.RSBox
 import io.rsbox.engine.system.crypt.rsa.RSA
 import io.rsbox.engine.model.world.World
 import io.rsbox.engine.service.ServiceManager
@@ -11,9 +12,11 @@ import java.io.File
  * @author Kyle Escobar
  */
 
-class Engine {
+class Engine : io.rsbox.api.Engine {
 
-    fun preInit() {}
+    fun preInit() {
+        RSBox.engine = this
+    }
 
     fun init() {
         logger.info("Loading cache from data store.")
@@ -36,7 +39,7 @@ class Engine {
         ServiceManager.init()
 
         world.postLoad()
-        logger.info("Loaded game world.")
+        logger.info("Loaded game _world.")
     }
 
     fun postInit() {

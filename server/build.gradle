@@ -5,6 +5,7 @@ apply plugin: 'application'
 mainClassName = 'io.rsbox.server.Launcher'
 
 dependencies {
+    compile project(':api')
     compile project(':engine')
     compile project(':net')
 }

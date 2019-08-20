@@ -14,7 +14,7 @@ import java.util.*
  * @author Kyle Escobar
  */
 
-class World(val engine: Engine) {
+class World(val engine: Engine) : io.rsbox.api.world.World {
 
     val random: Random = SecureRandom()
 
@@ -29,15 +29,15 @@ class World(val engine: Engine) {
         HuffmanCodec(file.contents)
     }
 
-    fun preLoad() {
+    override fun preLoad() {
 
     }
 
-    fun load() {
+    override fun load() {
 
     }
 
-    fun postLoad() {
+    override fun postLoad() {
         xteaKeyService = ServiceManager[XteaKeyService::class.java]!!
     }
 

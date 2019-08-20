@@ -15,7 +15,7 @@ object PlayerPreSyncTask : SyncTask<Player> {
         val player = entity
 
         val last = player.lastKnownRegionBase
-        val current = player.tile
+        val current = player._tile
 
         if(last == null || shouldRebuildRegion(last, current)) {
             val regionX = ((current.x shr 3) - (Chunk.MAX_VIEWPORT shr 4)) shl 3
@@ -23,7 +23,7 @@ object PlayerPreSyncTask : SyncTask<Player> {
 
             player.lastKnownRegionBase = Coordinate(regionX, regionZ, current.height)
 
-            val xteaKeyService = player.world.xteaKeyService
+            val xteaKeyService = player._world.xteaKeyService
             player.sendPacket(RebuildRegionPacket(current.x shr 3, current.z shr 3, xteaKeyService))
         }
     }
