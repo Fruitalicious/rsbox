@@ -31,7 +31,17 @@ class Tile : io.rsbox.api.world.Tile {
 
     constructor(other: Tile) : this(other.x, other.z, other.height)
 
+    fun isWithinRadius(other: Tile, radius: Int): Boolean = isWithinRadius(other.x, other.z, other.height, radius)
 
+    fun isWithinRadius(otherX: Int, otherZ: Int, otherHeight: Int, radius: Int): Boolean {
+        if(otherHeight != height) {
+            return false
+        }
+
+        val dx = Math.abs(x - otherX)
+        val dz = Math.abs(z - otherZ)
+        return dx <= radius && dz <= radius
+    }
 
     companion object {
         /**

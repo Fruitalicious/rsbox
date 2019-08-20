@@ -13,6 +13,9 @@ import io.rsbox.engine.net.packet.ServerPacket
 import io.rsbox.engine.net.packet.impl.server.InterfaceOpenPacket
 import io.rsbox.engine.net.packet.impl.server.InterfaceOpenRootPacket
 import io.rsbox.engine.net.packet.impl.server.LoginPacket
+import io.rsbox.engine.net.packet.model.GamePacket
+import io.rsbox.engine.task.sync.block.UpdateBlockBuffer
+import io.rsbox.engine.task.sync.block.UpdateBlockType
 import io.rsbox.game.Game
 
 /**
@@ -55,6 +58,8 @@ class Player(val channel: Channel) : LivingEntity(), io.rsbox.api.entity.Player 
 
     override val displayMode: DisplayMode get() = interfaces.displayMode
 
+    val blockBuffer: UpdateBlockBuffer = UpdateBlockBuffer()
+
     fun register() {
         _world.registerPlayer(this)
     }
@@ -77,10 +82,24 @@ class Player(val channel: Channel) : LivingEntity(), io.rsbox.api.entity.Player 
         sendPacket(LoginPacket(lastIndex, _tile, tiles, _world.xteaKeyService))
 
         Game.setupRootInterfaces(this)
+
+        addBlock(UpdateBlockType.APPEARANCE)
     }
 
     fun sendPacket(packet: ServerPacket) {
         context.write(packet)
+    }
+
+    fun sendPacket(packet: GamePacket) {
+        channel.write(packet)
+    }
+
+    fun addBlock(block: UpdateBlockType) {
+        blockBuffer.addBit(block.mask)
+    }
+
+    fun hasBlock(block: UpdateBlockType): Boolean {
+        return blockBuffer.hasBit(block.mask)
     }
 
     /**

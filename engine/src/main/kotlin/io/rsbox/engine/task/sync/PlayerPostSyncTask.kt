@@ -8,6 +8,7 @@ import io.rsbox.engine.model.entity.Player
 
 object PlayerPostSyncTask : SyncTask<Player> {
     override fun run(entity: Player) {
-
+        entity.blockBuffer.clean()
+        entity.channel.flush()
     }
 }

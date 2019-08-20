@@ -8,6 +8,9 @@ dependencies {
     compile project(':api')
     compile project(':engine')
     compile project(':net')
+    compile project(':game')
+    compile project(':util')
+    compile project(':plugin')
 }
 
 run {
@@ -23,8 +26,6 @@ sourceSets {
 task setup {
     description = "RSBox Server Setupd"
     group = "rsbox"
-    
-    def console = System.console()
     
     doFirst {
         println "\n" +
