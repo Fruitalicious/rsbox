@@ -1,19 +1,13 @@
 package io.rsbox.engine.service
 
-import io.rsbox.engine.Server
-import mu.KotlinLogging
-
 /**
  * @author Kyle Escobar
  */
 
 abstract class Service {
+    var loaded: Boolean = false
 
-    val isRunning: Boolean = false
+    abstract fun start()
 
-    val logger = KotlinLogging.logger {}
-
-    abstract fun onStart(server: Server)
-
-    abstract fun onStop(server: Server)
+    abstract fun stop()
 }

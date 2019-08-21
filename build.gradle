@@ -3,75 +3,30 @@ plugins {
 }
 
 allprojects {
+    apply plugin: 'idea'
     apply plugin: 'org.jetbrains.kotlin.jvm'
     
     group 'rsbox'
-    version '1.0'
+    version '0.1'
 
-
-    ext {
-        jvmVersion = '1.8'
-        junitVersion = '4.12'
-        kotlinVersion = '1.3.11'
-        kcoroutineVersion = '1.1.0'
-        nettyVersion = '4.0.34.Final'
-        gsonVersion = '2.8.5'
-        yamlVersion = '2.5.0'
-        jacksonVersion = '2.5.0'
-        reflectionsVersion = '0.9.11'
-        runeliteVersion = 'runelite-parent-1.5.2.1'
-        commonsIoVersion = '2.4'
-        bcryptVersion = '0.4'
-        bouncycastleVersion = '1.54'
-        slf4jVersion = '1.7.25'
-        log4jVersion = '2.11.2'
-        kloggingVersion = '1.5.9'
-        classGraphVersion = '4.6.12'
-        fastUtilVersion = '7.0.7'
-    }
-    
     repositories {
-        mavenLocal()
+        mavenCentral()
         jcenter()
         maven { url "https://repo.maven.apache.org/maven2" }
         maven { url 'https://jitpack.io' }
     }
 
-    configurations {
-        ktlint
-    }
-
     dependencies {
-        ktlint "com.github.shyiko:ktlint:0.15.0"
+        implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 
-        compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
-        compile "org.slf4j:slf4j-api:$slf4jVersion"
-        compile "org.apache.logging.log4j:log4j-slf4j-impl:$log4jVersion"
-        compile "io.github.microutils:kotlin-logging:$kloggingVersion"
-        compile 'com.uchuhimo:konf:0.13.3'
-        compile 'io.github.microutils:kotlin-logging:1.7.2'
-        compile 'com.github.uchuhimo:konf:master-SNAPSHOT'
-
-        compile "org.jetbrains.kotlin:kotlin-scripting-common:$kotlinVersion"
-        compile "org.jetbrains.kotlin:kotlin-script-runtime:$kotlinVersion"
-        compile "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kcoroutineVersion"
-
-        compile group: 'org.jetbrains.kotlin', name: 'kotlin-reflect', version: '1.3.41'
-        compile group: 'org.reflections', name: 'reflections', version: '0.9.10'
-
-        compile "org.reflections:reflections:$reflectionsVersion"
-        compile "commons-io:commons-io:$commonsIoVersion"
-
-        compile "io.github.classgraph:classgraph:$classGraphVersion"
-        compile "it.unimi.dsi:fastutil:$fastUtilVersion"
-
-        implementation "org.bouncycastle:bcprov-jdk15on:$bouncycastleVersion"
-
-        implementation "org.mindrot:jbcrypt:$bcryptVersion"
-        implementation "com.google.code.gson:gson:$gsonVersion"
-        implementation "com.github.runelite.runelite:cache:$runeliteVersion"
-        implementation "io.netty:netty-all:$nettyVersion"
-
-        testCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion"
+        compile 'org.slf4j:slf4j-api:1.7.25'
+        compile 'org.apache.logging.log4j:log4j-slf4j-impl:2.11.1'
+        compile 'io.github.microutils:kotlin-logging:1.5.9'
+        compile 'com.uchuhimo:konf:0.11'
+        compile 'com.fasterxml.jackson.core:jackson-core:2.9.9'
+        compile 'com.github.runelite.runelite:cache:runelite-parent-1.5.2.1'
+        compile 'io.netty:netty-all:4.0.34.Final'
+        compile 'net.openhft:zero-allocation-hashing:0.9'
+        compile 'it.unimi.dsi:fastutil:8.1.0'
     }
 }

@@ -1,14 +1,12 @@
 package io.rsbox.engine.service.impl
 
 import com.google.gson.Gson
-import io.rsbox.engine.Server
-import io.rsbox.engine.model.world.RSWorld
+import io.rsbox.engine.Engine
+import io.rsbox.engine.EngineConstants
 import io.rsbox.engine.service.Service
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap
-import mu.KotlinLogging
+import mu.KLogging
 import net.runelite.cache.IndexType
-import org.apache.commons.io.FilenameUtils
-import java.io.FileNotFoundException
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -21,109 +19,66 @@ class XteaKeyService : Service() {
 
     private val keys = Int2ObjectOpenHashMap<IntArray>()
 
-    val validRegions: IntArray
-        get() = keys.keys.toIntArray()
+    val validRegions: IntArray get() = keys.keys.toIntArray()
 
-    override fun onStart(server: Server) {
-        val path = Paths.get("rsbox/data/xteas/")
-
+    override fun start() {
+        val path = Paths.get(EngineConstants.XTEAS_FILE)
         if(!Files.exists(path)) {
-            throw FileNotFoundException("Path does not exist. $path")
-        }
-
-        val singleFile = path.resolve("xteas.json")
-        if(Files.exists(singleFile)) {
-            loadSingleFile(singleFile)
+            logger.error("Could not find the xteas.json decryption keys. Please run the [server:setup] gradle task before running the server.")
+            System.exit(0)
         } else {
-            loadDirectory(path)
+            loadFile(path)
         }
 
-        loadKeys(server.world)
+        loadKeys()
     }
 
-    override fun onStop(server: Server) {
+    override fun stop() {
 
-    }
-
-    private fun loadSingleFile(path: Path) {
-        val reader = Files.newBufferedReader(path)
-        val xteas = Gson().fromJson(reader, Array<XteaFile>::class.java)
-        reader.close()
-
-        xteas?.forEach { xtea ->
-            keys[xtea.region] = xtea.keys
-        }
-    }
-
-    private fun loadDirectory(path: Path) {
-        Files.list(path).forEach { list ->
-            val region = FilenameUtils.removeExtension(list.fileName.toString()).toInt()
-            val keys = IntArray(4)
-            Files.newBufferedReader(list).useLines { lines ->
-                lines.forEachIndexed { index, line ->
-                    val key = line.toInt()
-                    keys[index] = key
-                }
-            }
-            this.keys[region] = keys
-        }
-    }
-
-    private fun loadKeys(world: RSWorld) {
-        /*
-         * Get the total amount of valid regions and which keys we are missing.
-         */
-        val maxRegions = Short.MAX_VALUE
-        var totalRegions = 0
-        val missingKeys = mutableListOf<Int>()
-
-        val regionIndex = world.cacheStore.getIndex(IndexType.MAPS)
-        for (regionId in 0 until maxRegions) {
-            val x = regionId shr 8
-            val z = regionId and 0xFF
-
-            /*
-             * Check if the region corresponding to the x and z can be
-             * found in our cache.
-             */
-            regionIndex.findArchiveByName("m${x}_$z") ?: continue
-            regionIndex.findArchiveByName("l${x}_$z") ?: continue
-
-            /*
-             * The region was found in the regionIndex.
-             */
-            totalRegions++
-
-            /*
-             * If the XTEA is not found in our xteaService, we know the keys
-             * are missing.
-             */
-            if (get(regionId).contentEquals(EMPTY_KEYS)) {
-                missingKeys.add(regionId)
-            }
-        }
-
-        /*
-         * Set the XTEA service for the [RSWorld].
-         */
-        world.xteaKeyService = this
-
-        val validKeys = totalRegions - missingKeys.size
-        logger.info("Loaded {} / {} ({}%) XTEA keys.", validKeys, totalRegions,
-            String.format("%.2f", (validKeys.toDouble() * 100.0) / totalRegions.toDouble()))
     }
 
     fun get(region: Int): IntArray {
-        if (keys[region] == null) {
+        if(keys[region] == null) {
             logger.trace { "No XTEA keys found for region $region." }
             keys[region] = EMPTY_KEYS
         }
         return keys[region]!!
     }
 
+    private fun loadKeys() {
+        val maxRegions = Short.MAX_VALUE
+        var totalRegions = 0
+        val missingKeys = mutableListOf<Int>()
+
+        val regionIndex = Engine.cacheStore.getIndex(IndexType.MAPS)
+        for(regionId in 0 until maxRegions) {
+            val x = regionId shr 8
+            val z = regionId and 0xFF
+
+            regionIndex.findArchiveByName("m${x}_$z") ?: continue
+            regionIndex.findArchiveByName("l${x}_$z") ?: continue
+
+            totalRegions++
+
+            if(get(regionId).contentEquals(EMPTY_KEYS)) {
+                missingKeys.add(regionId)
+            }
+        }
+
+        val validKeys = totalRegions - missingKeys.size
+        logger.info("Loaded {} / {} region XTEA keys.", validKeys, totalRegions)
+    }
+
+    private fun loadFile(path: Path) {
+        val reader = Files.newBufferedReader(path)
+        val xteas = Gson().fromJson(reader, Array<XteaFile>::class.java)
+        reader.close()
+        xteas?.forEach { xtea ->
+            keys[xtea.region] = xtea.keys
+        }
+    }
 
     private data class XteaFile(val region: Int, val keys: IntArray) {
-
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
             if (javaClass != other?.javaClass) return false
@@ -135,6 +90,7 @@ class XteaKeyService : Service() {
 
             return true
         }
+
         override fun hashCode(): Int {
             var result = region
             result = 31 * result + keys.contentHashCode()
@@ -142,8 +98,7 @@ class XteaKeyService : Service() {
         }
     }
 
-    companion object {
-        val logger = KotlinLogging.logger {}
-        val EMPTY_KEYS = intArrayOf(0, 0, 0, 0)
+    companion object : KLogging() {
+        val EMPTY_KEYS = intArrayOf(0,0,0,0)
     }
 }

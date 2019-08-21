@@ -20,6 +20,7 @@ object Xtea {
     /**
      * Deciphers the xtea encryption using the given [key]
      */
+    @Suppress("INTEGER_OVERFLOW")
     fun decipher(key: IntArray, data: ByteArray, start: Int, end: Int): ByteArray {
         val numBlocks = (end - start) / 8
 
@@ -29,7 +30,7 @@ object Xtea {
         for (i in 0 until numBlocks) {
             var y = buffer.int
             var z = buffer.int
-            @Suppress("INTEGER_OVERFLOW") var sum = GOLDEN_RATIO * ROUNDS
+            var sum = GOLDEN_RATIO * ROUNDS
             val delta = GOLDEN_RATIO
             for (j in ROUNDS downTo 1) {
                 z -= (y.ushr(5) xor (y shl 4)) + y xor sum + key[sum.ushr(11) and 0x56c00003]

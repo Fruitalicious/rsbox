@@ -1,5 +1,4 @@
-.idea/
 .gradle/
-error.log
-rsbox/*
+.idea/
 build/
+rsbox/*

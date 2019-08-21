@@ -1,8 +1,6 @@
 [![Build Status](https://img.shields.io/travis/rsbox/rsbox)](https://travis-ci.org/rsbox/rsbox)
-[![GitHub Releases](https://img.shields.io/github/downloads/rsbox/rsbox/latest/total)](https://github.com/rsbox/rsbox/releases)
+![GitHub tag (latest by date)](https://img.shields.io/github/tag-date/rsbox/rsbox?label=latest)
 [![RSBox License](https://img.shields.io/github/license/rsbox/rsbox)](https://github.com/rsbox/rsbox/blob/master/LICENSE)
-[![RSBox Issues](https://img.shields.io/github/issues/rsbox/rsbox)](https://github.com/rsbox/rsbox/issues)
-[![GitHub commit activity](https://img.shields.io/github/commit-activity/m/rsbox/rsbox)](https://github.com/rsbox/rsbox/commits/master)
 [![GitHub contributors](https://img.shields.io/github/contributors/rsbox/rsbox)](https://github.com/rsbox/rsbox/graphs/contributors)
 [![Join Discord](https://img.shields.io/discord/595582070596698116?color=738ADB&label=Discord)](https://discord.gg/XYYuKn2)
 
@@ -49,7 +47,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-RSBox is an Open-Source RSPS inspired by RSMod. There are many differences and improvements as well as an entirely reworked engine. Below are some of the  primary core offers.
+RSBox is an Open-Source Runescape Private Server running the latest OSRS revision. It aims to provide a very simple and documented way to build your own custom content in OSRS using our documented API.
 
 Here's What RSBox Offers:
 * Streamlined plugin system with Bukkit style API design. The API layer stits on top of the engine so no matter what OSRS revision you use, plugins should not break.
@@ -105,6 +103,5 @@ Project Link: [https://github.com/rsbox/rsbox](https://github.com/rsbox/rsbox)
 
 <!-- ACKNOWLEDGEMENTS -->
 ## Acknowledgements
-
 
 
