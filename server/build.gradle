@@ -1,23 +1,79 @@
-plugins {
-    id "org.flywaydb.flyway" version "5.2.4"
-}
+plugins {}
 
 apply plugin: 'application'
 
 mainClassName = 'io.rsbox.server.Launcher'
 
-run {
-    workingDir = rootProject.projectDir
-}
-
 dependencies {
     compile project(':api')
+    compile project(':engine')
+    compile project(':net')
     compile project(':game')
+    compile project(':util')
+    compile project(':plugin')
+}
 
-    compile "org.slf4j:slf4j-api:$slf4jVersion"
-    compile "org.apache.logging.log4j:log4j-slf4j-impl:$log4jVersion"
-    compile "io.github.microutils:kotlin-logging:$kloggingVersion"
-    compile 'com.uchuhimo:konf:0.13.3'
-    compile "org.flywaydb:flyway-core:5.2.4"
-    compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.17'
+run {
+    workingDir = rootProject.projectDir
+    group = "rsbox"
+}
+
+sourceSets {
+    main.kotlin.srcDirs = ['src/main/kotlin']
+    main.resources.srcDirs = ['src/main/resources']
+}
+
+task setup {
+    description = "RSBox Server Setupd"
+    group = "rsbox"
+    
+    doFirst {
+        println "\n" +
+                "  _____   _____ ____   ______   __\n" +
+                " |  __ \\ / ____|  _ \\ / __ \\ \\ / /\n" +
+                " | |__) | (___ | |_) | |  | \\ V / \n" +
+                " |  _  / \\___ \\|  _ <| |  | |> <  \n" +
+                " | | \\ \\ ____) | |_) | |__| / . \\ \n" +
+                " |_|  \\_\\_____/|____/ \\____/_/ \\_\\\n" +
+                "                                  \n" +
+                "                                  "
+        
+        println "========== SETUP WIZARD =========="
+        ant.input(message: 'Would you like to run the setup wizard?', validargs: 'y,n', addproperty: 'runwizard')
+        
+        if(ant.runwizard == 'y') {
+            javaexec {
+                classpath = sourceSets.main.runtimeClasspath
+                main = 'io.rsbox.server.setup.Setup'
+                args = ['init']
+            }
+        }
+        
+        ant.input(message: 'Would you like to download the cache from the RSBox repo?', validargs: 'y,n', addproperty: 'downloadcache')
+        
+        if(ant.downloadcache == 'y') {
+            javaexec {
+                classpath = sourceSets.main.runtimeClasspath
+                main = 'io.rsbox.server.setup.Setup'
+                args = ['cache']
+            }
+        }
+        
+        ant.input(message: 'Would you like to generate a RSA encryption key?', validargs: 'y,n', addproperty: 'rsa')
+        
+        if(ant.rsa == 'y') {
+            javaexec {
+                classpath = sourceSets.main.runtimeClasspath
+                main = 'io.rsbox.server.setup.Setup'
+                args = ['rsa']
+            }
+        }
+        
+        println "======= RSBOX SETUP COMPLETE ======="
+        println "You may now start your server by using the 'RUN' gradle task."
+    }
+}
+
+task update(type: JavaExec, group: "rsbox") {
+    description = "Starts the RSBox Server."
 }

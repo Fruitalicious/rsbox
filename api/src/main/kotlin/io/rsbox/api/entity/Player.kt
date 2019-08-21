@@ -1,9 +1,7 @@
 package io.rsbox.api.entity
 
-import io.rsbox.api.Server
 import io.rsbox.api.inter.DisplayMode
 import io.rsbox.api.inter.InterfaceDestination
-import io.rsbox.api.inter.InterfaceSet
 import io.rsbox.api.world.World
 
 /**
@@ -11,47 +9,30 @@ import io.rsbox.api.world.World
  */
 
 interface Player : LivingEntity {
-    val username: String
 
-    val displayName: String
+    var username: String
 
-    val password: String
+    var passwordHash: String
 
-    val uuid: String
+    var displayName: String
 
-    val privilege: Int
+    var privilege: Int
 
-    var server: Server
+    var initiated: Boolean
 
-    var world: World
+    val world: World
 
-    val interfaces: InterfaceSet
+    /**
+     * ********** INTERFACES **********
+     */
 
-
+    val displayMode: DisplayMode
 
     fun openOverlayInterface(displayMode: DisplayMode)
 
-    fun getInterfaceAt(dest: InterfaceDestination): Int
-
-    fun openInterface(dest: InterfaceDestination, autoClose: Boolean)
-
-    fun openInterface(parent: Int, child: Int, interfaceId: Int, type: Int, isModal: Boolean)
+    fun openInterface(parent: Int, child: Int, interfaceId: Int, type: Int = 0, isModal: Boolean = false)
 
     fun openInterface(interfaceId: Int, dest: InterfaceDestination, fullscreen: Boolean = false)
 
-
-
-    fun getVarbit(id: Int): Int
-
-    fun getVarp(id: Int): Int
-
-    fun setVarbit(id: Int, value: Int)
-
-    fun setVarp(id: Int, value: Int)
-
-    fun syncVarp(id: Int)
-
-
-
-    fun runClientScript(id: Int, vararg args: Any)
+    fun openInterface(dest: InterfaceDestination, autoClose: Boolean = false)
 }

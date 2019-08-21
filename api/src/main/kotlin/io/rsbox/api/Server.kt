@@ -1,10 +1,9 @@
 package io.rsbox.api
 
-import io.rsbox.api.world.World
-
 /**
- * The base object which represents the engine server class.
+ * Represents the Server class used to start the game engine.
+ *
+ * @author Kyle Escobar
  */
 interface Server {
-    var world: World
 }
