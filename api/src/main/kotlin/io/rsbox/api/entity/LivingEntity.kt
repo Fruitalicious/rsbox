@@ -5,4 +5,5 @@ package io.rsbox.api.entity
  */
 
 interface LivingEntity : Entity {
+    var index: Int
 }
