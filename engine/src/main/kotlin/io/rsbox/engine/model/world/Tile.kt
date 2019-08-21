@@ -43,6 +43,8 @@ class Tile : io.rsbox.api.world.Tile {
         return dx <= radius && dz <= radius
     }
 
+    fun step(direction: Direction, num: Int = 1): Tile = Tile(this.x + (num * direction.getDeltaX()), this.z + (num * direction.getDeltaZ()), this.height)
+
     companion object {
         /**
          * The total amount of height levels that can be used in the game.

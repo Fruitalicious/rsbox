@@ -60,6 +60,10 @@ class Player(val channel: Channel) : LivingEntity(), io.rsbox.api.entity.Player 
 
     val blockBuffer: UpdateBlockBuffer = UpdateBlockBuffer()
 
+    var moved = false
+
+    var steps: IntArray? = null
+
     fun register() {
         _world.registerPlayer(this)
     }
