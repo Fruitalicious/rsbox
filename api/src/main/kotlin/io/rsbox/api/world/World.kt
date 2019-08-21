@@ -1,18 +1,23 @@
 package io.rsbox.api.world
 
-import io.rsbox.api.entity.LivingEntity
-import io.rsbox.api.entity.Player
-
 /**
+ * Represents the game engine's world object.
+ *
  * @author Kyle Escobar
  */
-
 interface World {
-    fun init()
+    /**
+     * Executed right after the world is initialized.
+     */
+    fun preLoad()
 
+    /**
+     * Executed to load world.
+     */
     fun load()
 
-    fun unload()
-
-    fun register(player: Player): Boolean
+    /**
+     * Executed after everything else in the server has been initialized.
+     */
+    fun postLoad()
 }

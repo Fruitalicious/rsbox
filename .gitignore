@@ -1,5 +1,4 @@
 .gradle/
-.idea/*
+.idea/
 build/
 rsbox/*
-out/
