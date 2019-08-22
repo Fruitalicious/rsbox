@@ -1,1 +1,19 @@
-plugins {}
+plugins {
+    id 'com.github.johnrengelman.shadow' version '5.1.0'
+}
+
+apply plugin: 'com.github.johnrengelman.shadow'
+
+shadowJar {
+    //noinspection GrDeprecatedAPIUsage
+    baseName = "rsbox-api"
+    //noinspection GrDeprecatedAPIUsage
+    classifier = null
+    
+    dependencies {
+        exclude(dependency('io.netty:netty-all:4.0.34.Final'))
+        exclude(dependency('net.openhft:zero-allocation-hashing:0.9'))
+        exclude(dependency('org.jetbrains.kotlin:kotlin-stdlib-jdk8'))
+        exclude(dependency('it.unimi.dsi:fastutil:8.1.0'))
+    }
+}

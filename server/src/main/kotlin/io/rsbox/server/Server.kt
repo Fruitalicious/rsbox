@@ -54,6 +54,8 @@ class Server : io.rsbox.api.Server {
 
         logger.info("Starting game network.")
         ServerNetwork.start()
+
+        logger.info { "Server is now running..." }
     }
 
     private fun initDirs() {
