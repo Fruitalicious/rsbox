@@ -36,9 +36,9 @@ object RSA : KLogging() {
 
     private const val radix = 16
     private val bits = Config{addSpec(ServerSpec)}[ServerSpec.rsa_bits]
-    private val privateKeyPath = Paths.get("../${EngineConstants.RSA_PRIVATE_FILE}")
-    private val publicKeyPath = Paths.get("../${EngineConstants.RSA_PUBLIC_FILE}")
-    private val modulusPath = Paths.get("../${EngineConstants.RSA_MODULUS_FILE}")
+    private var privateKeyPath = Paths.get("../${EngineConstants.RSA_PRIVATE_FILE}")
+    private var publicKeyPath = Paths.get("../${EngineConstants.RSA_PUBLIC_FILE}")
+    private var modulusPath = Paths.get("../${EngineConstants.RSA_MODULUS_FILE}")
 
     fun load() {
         val file = File(EngineConstants.RSA_PRIVATE_FILE)
@@ -67,7 +67,7 @@ object RSA : KLogging() {
         }
     }
 
-    fun generate() {
+    fun generate(localPath: Boolean = false) {
         Security.addProvider(BouncyCastleProvider())
 
         val kpg = KeyPairGenerator.getInstance("RSA", "BC")
@@ -79,6 +79,12 @@ object RSA : KLogging() {
 
         exponent = privateKey.privateExponent
         modulus = privateKey.modulus
+
+        if(localPath) {
+            privateKeyPath = Paths.get(EngineConstants.RSA_PRIVATE_FILE)
+            publicKeyPath = Paths.get(EngineConstants.RSA_PUBLIC_FILE)
+            modulusPath = Paths.get(EngineConstants.RSA_MODULUS_FILE)
+        }
 
         try {
             // Write private key

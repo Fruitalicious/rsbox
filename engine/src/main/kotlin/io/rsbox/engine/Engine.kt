@@ -1,6 +1,7 @@
 package io.rsbox.engine
 
 import io.rsbox.api.RSBox
+import io.rsbox.engine.cache.def.CacheData
 import io.rsbox.engine.system.crypt.rsa.RSA
 import io.rsbox.engine.model.world.World
 import io.rsbox.engine.service.ServiceManager
@@ -13,6 +14,9 @@ import java.io.File
  */
 
 class Engine : io.rsbox.api.Engine {
+
+    lateinit var _cache: CacheData
+    override val cache: io.rsbox.api.cache.CacheData get() = _cache
 
     fun preInit() {
         RSBox.engine = this
@@ -39,7 +43,10 @@ class Engine : io.rsbox.api.Engine {
         ServiceManager.init()
 
         world.postLoad()
-        logger.info("Loaded game _world.")
+        logger.info("Loaded game world.")
+
+        _cache = CacheData()
+        _cache.loadAll()
     }
 
     fun postInit() {

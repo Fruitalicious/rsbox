@@ -33,6 +33,6 @@ object ServerNetwork : KLogging() {
         bootstrap.bind(InetSocketAddress(InetAddress.getByName(addr), port)).sync().awaitUninterruptibly()
         System.gc()
 
-        logger.info("Server is now listening for connections on $addr:$port...")
+        logger.info("Server network listening on $addr:$port")
     }
 }
