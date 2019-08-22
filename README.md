@@ -75,23 +75,23 @@ Below is a quick guide on how to setup the project both ways. You can always fin
 
 1. Download the latest *rsbox-server-<version>.jar* from the releases page. You can click on the badge above for quick navigation.<br>
 2. Before you can start your server for the first time, you must run the setup wizard. This downloads everything needed for RSBox to function properly.
-<br>
+<br><br>
 <code>
 java -Xmx1G -Xms1G -jar rsbox-server-0.1.jar --setup
-</code>
+</code><br><br>
 
 <img src="https://i.gyazo.com/6d37aec99533683833b591264cb3fbcf.gif"><br><br>
-After the setup wizard completes, You may start your server with the following command.<br>
+After the setup wizard completes, You may start your server with the following command.<br><br>
 <code>
 java -Xmx1G -Xms1G -jar rsbox-server-0.1.jar
 </code>
-<br>
+<br><br>
 
 ### Server IDE Setup
-1. Clone the repository into a directory.
+1. Clone the repository into a directory.<br><br>
 <code>
 git clone https://github.com/rsbox/rsbox
-</code>
+</code><br><br>
 To run the setup wizard within an IDE, run the gradle setup task.<br>
 <img src="https://i.imgur.com/Xi5f2En.png">
 <br>
