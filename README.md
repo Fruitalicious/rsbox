@@ -1,9 +1,6 @@
 [![Build Status](https://img.shields.io/travis/rsbox/rsbox)](https://travis-ci.org/rsbox/rsbox)
 ![GitHub tag (latest by date)](https://img.shields.io/github/tag-date/rsbox/rsbox?label=latest)
-[![GitHub All Releases](https://img.shields.io/github/downloads/rsbox/rsbox/total)](https://github.com/rsbox/rsbox/releases)
 [![RSBox License](https://img.shields.io/github/license/rsbox/rsbox)](https://github.com/rsbox/rsbox/blob/master/LICENSE)
-[![RSBox Issues](https://img.shields.io/github/issues/rsbox/rsbox)](https://github.com/rsbox/rsbox/issues)
-[![GitHub commit activity](https://img.shields.io/github/commit-activity/m/rsbox/rsbox)](https://github.com/rsbox/rsbox/commits/master)
 [![GitHub contributors](https://img.shields.io/github/contributors/rsbox/rsbox)](https://github.com/rsbox/rsbox/graphs/contributors)
 [![Join Discord](https://img.shields.io/discord/595582070596698116?color=738ADB&label=Discord)](https://discord.gg/XYYuKn2)
 
@@ -39,6 +36,7 @@
 
 * [About the Project](#about-the-project)
   * [Built With](#built-with)
+* [Quick Start](#quick-start)
 * [Roadmap](#roadmap)
 * [Contributing](#contributing)
 * [License](#license)
@@ -50,7 +48,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-RSBox is an Open-Source RSPS inspired by RSMod. There are many differences and improvements as well as an entirely reworked engine. Below are some of the  primary core offers.
+RSBox is an Open-Source Runescape Private Server running the latest OSRS revision. It aims to provide a very simple and documented way to build your own custom content in OSRS using our documented API.
 
 Here's What RSBox Offers:
 * Streamlined plugin system with Bukkit style API design. The API layer stits on top of the engine so no matter what OSRS revision you use, plugins should not break.
@@ -66,6 +64,40 @@ This project relies on a couple of core software and libraries. They are listed 
 * [Gradle](https://gradle.com/)
 * [Java](https://www.java.com/en/)
 * [Kotlin](https://kotlinlang.org/)
+
+<!-- QUICK START -->
+## Quick Start
+
+You can setup RSBox two different ways, either in an IDE if you plan on adding content.
+Or you can download the server JAR executable from the releases page.<br>
+Below is a quick guide on how to setup the project both ways. You can always find more information on the Wiki or by joining our discord server.<br>
+### Server Executable Setup
+
+1. Download the latest *rsbox-server-<version>.jar* from the releases page. You can click on the badge above for quick navigation.<br>
+2. Before you can start your server for the first time, you must run the setup wizard. This downloads everything needed for RSBox to function properly.
+<br><br>
+<code>
+java -Xmx1G -Xms1G -jar rsbox-server-0.1.jar --setup
+</code><br><br>
+
+<img src="https://i.gyazo.com/6d37aec99533683833b591264cb3fbcf.gif"><br><br>
+After the setup wizard completes, You may start your server with the following command.<br><br>
+<code>
+java -Xmx1G -Xms1G -jar rsbox-server-0.1.jar
+</code>
+<br><br>
+
+### Server IDE Setup
+1. Clone the repository into a directory.<br><br>
+<code>
+git clone https://github.com/rsbox/rsbox
+</code><br><br>
+To run the setup wizard within an IDE, run the gradle setup task.<br>
+<img src="https://i.imgur.com/Xi5f2En.png">
+<br>
+<br>
+You can now start the server by just executing `gradle run`.
+
 
 
 <!-- ROADMAP -->

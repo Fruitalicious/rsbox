@@ -23,6 +23,8 @@ class Tile : io.rsbox.api.world.Tile {
 
     override val asTileHashMultiplier: Int get() = (z shr 13) or ((x shr 13) shl 8) or ((height and 0x3) shl 16)
 
+    val chunkCoords: ChunkCoords get() = ChunkCoords.fromTile(this)
+
     private constructor(coordinate: Int) {
         this.coordinate = coordinate
     }

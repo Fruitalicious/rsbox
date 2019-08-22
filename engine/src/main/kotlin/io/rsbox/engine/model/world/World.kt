@@ -1,6 +1,7 @@
 package io.rsbox.engine.model.world
 
 import io.rsbox.engine.Engine
+import io.rsbox.engine.cache.def.CacheData
 import io.rsbox.engine.model.LivingEntityList
 import io.rsbox.engine.model.entity.Player
 import io.rsbox.engine.service.ServiceManager
@@ -28,6 +29,8 @@ class World(val engine: Engine) : io.rsbox.api.world.World {
         val file = archive.getFiles(Engine.cacheStore.storage.loadArchive(archive)!!).files[0]
         HuffmanCodec(file.contents)
     }
+
+    val cache: CacheData get() = engine._cache
 
     override fun preLoad() {
 
